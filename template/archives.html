@@ -1,0 +1,46 @@
+{% extends "index.html" %}
+{% block title %}
+<title>archives-Lucius Li</title>
+{% endblock %}
+{% block site-heading %}
+    <header class="intro-header" style="background-image: url('/static/img/archives_bg.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 ">
+                <div class="site-heading">
+                    <h1>Archives</h1>
+                    <!--<hr class="small">-->
+                    <span class="subheading">This is all of my articles</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    </header>
+{% endblock %}
+{% block body %}
+    <!--regroup 对 dates 按照 year(年份) 分组，把相同年份的月分到一个组-->
+    {% regroup papers by date.year as posts_by_year %}
+
+        {% for year in posts_by_year %}
+
+            {% regroup year.list by date.month as posts_by_month %}
+
+                {% for month in posts_by_month %}
+                    <legend id="{{ year.grouper }}-{{ month.grouper|stringformat:'02d' }}">{{ year.grouper }}年{{ month.grouper }}月</legend>
+                        <ul>
+                            {% for paper in month.list %}
+                                <li>
+                                <span>{{ paper.date|date:"Y-m-d" }}</span>
+                                    »
+                                    <a href="/article/{{ paper.src }}">{{ paper.title }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+
+                {% endfor %}
+
+
+        {% endfor %}
+    </ul>
+
+{% endblock %}

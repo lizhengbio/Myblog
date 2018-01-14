@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}
+   <title>{{ paper.title }}</title>
+{% endblock %}
+{% block postheader %}
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/static/img/post-bg-php.jpg')
+    }
+{% endblock %}
+
+{% block heading %}
+    <div class="post-heading">
+        <div class="tags">
+            <a class="tag" href="/tags/#{{ paper.tag }}" title="{{ paper.tag }}">{{ paper.tag }}</a>
+
+        </div>
+        <h1>{{ paper.title }}</h1>
+
+        <h2 class="subheading"></h2>
+
+        <span class="meta">Posted by Lucius Li&nbsp;&nbsp;&nbsp;{{ paper.date|date:"Y-m-d" }}</span>
+
+    </div>
+{% endblock %}
+
+{% block article %}
+    <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container" deep="3">
+    {{ paper.content|safe }}
+                <section class = "like">
+                    阅读：{{ paper.views }}&nbsp;&nbsp;&nbsp;<a onclick="likes_topic();" style="cursor:pointer;text-decoration:none">
+                    <i class="fa fa-thumbs-o-up" aria-hidden="true"></i>&nbsp;<span class="ajax_like"></span><span class="hidden_like">{{ paper.like }}<span></a>
+                </section>
+    </div>
+    <script>
+       function likes_topic(){
+    var dict = {};
+    dict["csrfmiddlewaretoken"] = "{{ csrf_token }}";
+    $.ajax({
+    type:'POST',
+    url:'/article/like/{{ paper.src }}/',
+    data:dict,
+    success:function(data){
+        var Data = data.data;
+        var statue = data.statue;
+        console.log(Data);
+        console.log(statue);
+        if(statue == "success"){
+            $(".hidden_like").attr("style","display:none")
+            $(".ajax_like").text(Data);
+    }
+    },
+    error:function(error) {
+        console.log(error)
+    }
+
+    });
+    }
+    </script>
+{% endblock %}
+
+{% block comment %}
+<section>
+    <hr>
+    <h3 style="color:gray">发表评论</h3>
+    <form action="/comment/post/{{ paper.src }}/" method="post" class="comment-form">
+    {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+            <label for="{{ form.user_name.id_for_label }}">名字：</label>
+            {{ form.user_name }}
+            {{ form.user_name.errors }}
+            </div>
+            <div class="col-md-6">
+            <label for="{{ form.user_email.id_for_label }}">邮箱：</label>
+                {{ form.user_email }}
+                {{ form.user_email.errors }}
+            </div>
+            <div class="col-md-12">
+            <label for="{{ form.body.id_for_label }}">评论：</label>
+            <br>
+                {{ form.body }}
+                {{ form.body.errors }}
+
+            </div>
+            <button type="submit" class="btn btn-success btn-sm" style="float:right;margin-right:15px;padding:5px 10px;">发表</button>
+        </div>    <!-- row -->
+    </form>
+
+    <div>
+        <h3 style="color:gray">评论列表</h3>
+        <ul style="list-style:none;padding-left:0">
+           {% for comment in comment_list %}
+            <li>
+                <span style="color:#777;font-size:14px;">{{ comment.user_name }}</span>
+                <time style="color:#777;font-size:14px;">{{ comment.created_time }}</time>
+                <div style="color:#444;">
+                    {{ comment.body }}
+                </div>
+            <li>
+            <hr>
+            {%  empty %}
+            暂无评论
+            {% endfor %}
+         </ul>
+
+    </div>
+</section>
+{% endblock %}

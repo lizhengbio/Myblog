@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}
+   <title>tags-Lucius Li</title>
+{% endblock %}
+
+{% block postheader %}
+<style type="text/css">
+    header.intro-header{
+        position: relative;
+        background-image: url('/static/img/tag_background.jpg')
+    }
+{% endblock %}
+
+{% block heading %}
+    <div class="site-heading" id="tag-heading">
+
+        <h1>Tags</h1>
+
+        <h2 class="subheading"></h2>
+
+    </div>
+{% endblock %}
+{% block content %}
+    <!-- Main Content -->
+<div class="container">
+	<div class="row">
+		<div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <!-- 标签云 -->
+			<div id='tag_cloud' class="tags">
+                {% for key,value in tag_col.items %}
+
+				<a href="#{{ key }}" title="{{ key }}" style="background-color: {{ value }};">{{ key }}</a>
+                {% endfor %}
+			</div>
+
+            <!-- 标签列表 -->
+        {% for tag in tags %}
+			<div class="one-tag-list">
+			  	<span class="fa fa-tag listing-seperator" id="{{ tag }}">
+                    <span class="tag-text">{{ tag }}</span>
+                </span>
+                {% for paper in papers %}
+                    {% ifequal tag paper.tag %}
+				 <div class="post-preview">
+				    <a href="/article/{{ paper.src }}">
+				        <h2 class="post-title">
+                            {{ paper.title }}
+				        </h2>
+
+
+				    </a>
+				</div>
+				<hr>
+                    {% endifequal %}
+                 {% endfor %}
+			</div>
+        {% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
